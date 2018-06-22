@@ -14,6 +14,7 @@ public class camera extends AppCompatActivity {
     Button btnCamera;
     ImageView imageView;
     ImageView imageVieww2;
+    Button submit;
     int x=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,15 @@ public class camera extends AppCompatActivity {
         btnCamera = (Button)findViewById(R.id.button);
         imageView = (ImageView)findViewById(R.id.rearcamera);
         imageVieww2=(ImageView)findViewById(R.id.frontcamera);
+        submit=(Button)findViewById(R.id.submit_area);
+        submit.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                finish();
+                System.exit(0);
+            }
+        });
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -30,6 +40,7 @@ public class camera extends AppCompatActivity {
 
             }
         });
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

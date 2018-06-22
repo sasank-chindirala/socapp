@@ -19,11 +19,12 @@ public class MainActivity extends AppCompatActivity {
         String Roll=Rollo.getText().toString();
         EditText course=(EditText)findViewById(R.id.input_COURSE);
         String Course=course.getText().toString();
-        Intent camera=new Intent(this,camera.class);
-        camera.putExtra("Roll",Roll);
-        camera.putExtra("Course",Course);
-        startActivity(camera);
-
+        if(!Roll.isEmpty()&&!Course.isEmpty()) {
+            Intent camera = new Intent(this, camera.class);
+            camera.putExtra("Roll", Roll);
+            camera.putExtra("Course", Course);
+            startActivity(camera);
+        }
 
     }
 }
