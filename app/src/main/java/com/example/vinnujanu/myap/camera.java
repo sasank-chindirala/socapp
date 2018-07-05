@@ -3,14 +3,18 @@ package com.example.vinnujanu.myap;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorSpace;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.SyncStateContract;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+//import com.android.internal.http.multipart.MultipartEntity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,13 +23,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.entity.mime.MultipartEntity;
 
 public class camera extends AppCompatActivity {
     Button btnCamera;
     ImageView imageView;
     ImageView imageVieww2;
     Button submit;
+    String url="http://localhost:8000/upload/";
     int x=0;
+    String roll,course;
+    String img1fp="";
+    String img2fp="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,11 +51,14 @@ public class camera extends AppCompatActivity {
         imageView = (ImageView)findViewById(R.id.rearcamera);
         imageVieww2=(ImageView)findViewById(R.id.frontcamera);
         submit=(Button)findViewById(R.id.submit_area);
+        Bundle extras=getIntent().getExtras();
+        roll=extras.getString("Roll");
+        course=extras.getString("Course");
         submit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                finish();
+                UploadFile(url,roll,course,img1fp,img2fp);
                 System.exit(0);
             }
         });
@@ -86,6 +106,25 @@ public class camera extends AppCompatActivity {
 
         }
 
+    }
+    public static String uploadFile(String url, int server_id, String filepath) {
+        try {
+            //client.getParams().setParameter("http.socket.timeout", 90000); // 90 second
+            HttpPost post = new HttpPost(url);
+
+            MultipartEntity mpEntity = new MultipartEntity();
+            mpEntity.addPart("image", new FileBody(new File(filepath), "image/jpeg"));
+            post.setEntity(mpEntity);
+            post.addHeader("server_id", String.valueOf(server_id));
+
+            HttpResponse response = ColorSpace.Connector.client.execute(post);
+            if (response.getStatusLine().getStatusCode() != 200) { return "false"; }
+            return convertStreamToString(response.getEntity().getContent());
+        } catch (Exception e) {
+            if (SyncStateContract.Constants.DEBUG) e.printStackTrace();
+
+            return "false";
+        }
     }
     private String currentDateFormat(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HH_mm_ss");
